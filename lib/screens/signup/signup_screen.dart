@@ -1,10 +1,14 @@
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../stores/signup_store.dart';
 import '../../screens/signup/components/field_title.dart';
 
 class SignUpScreen extends StatelessWidget {
+  final SignupStore signupStore = SignupStore();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,135 +18,170 @@ class SignUpScreen extends StatelessWidget {
       ),
       body: Container(
         child: SingleChildScrollView(
-          child: Card(
-            margin: const EdgeInsets.symmetric(horizontal: 32),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: 8,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FieldTitle(
-                    title: 'Apelido',
-                    subtitle: 'Como aparecerá em seus anúncios',
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'Exemplo: João S.',
-                        isDense: true),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  FieldTitle(
-                    title: 'E-mail',
-                    subtitle: 'Enviaremos um e-mail de confirmação',
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Exemplo: joao@gmail.com',
-                      isDense: true,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Card(
+              margin: const EdgeInsets.symmetric(horizontal: 32),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FieldTitle(
+                      title: 'Apelido',
+                      subtitle: 'Como aparecerá em seus anúncios',
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  FieldTitle(
-                    title: 'Celular',
-                    subtitle: 'Proteja sua conta',
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Exemplo: (99) 99999-9999',
-                      isDense: true,
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signupStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Exemplo: João S.',
+                          isDense: true,
+                          errorText: signupStore.nameError,
+                        ),
+                        onChanged: signupStore.setName,
+                      );
+                    }),
+                    const SizedBox(
+                      height: 16,
                     ),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      TelefoneInputFormatter()
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  FieldTitle(
-                    title: 'Senha',
-                    subtitle: 'Use letras, números e caracteres especiais',
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      isDense: true,
+                    FieldTitle(
+                      title: 'E-mail',
+                      subtitle: 'Enviaremos um e-mail de confirmação',
                     ),
-                    obscureText: true,
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  FieldTitle(
-                    title: 'Confirmar Senha',
-                    subtitle: 'Repita a senha',
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      isDense: true,
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signupStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Exemplo: joao@gmail.com',
+                          isDense: true,
+                          errorText: signupStore.emailError,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        autocorrect: false,
+                        onChanged: signupStore.setEmail,
+                      );
+                    }),
+                    const SizedBox(
+                      height: 16,
                     ),
-                    obscureText: true,
-                  ),
-                  Container(
-                    height: 40,
-                    margin: const EdgeInsets.only(
-                      top: 20,
-                      bottom: 12,
+                    FieldTitle(
+                      title: 'Celular',
+                      subtitle: 'Proteja sua conta',
                     ),
-                    child: RaisedButton(
-                      color: Colors.orange,
-                      child: Text('CADASTRAR'),
-                      textColor: Colors.white,
-                      elevation: 0,
-                      onPressed: () {},
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signupStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Exemplo: (99) 99999-9999',
+                          isDense: true,
+                          errorText: signupStore.phoneError,
+                        ),
+                        onChanged: signupStore.setPhone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          TelefoneInputFormatter(),
+                        ],
+                      );
+                    }),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    FieldTitle(
+                      title: 'Senha',
+                      subtitle: 'Use letras, números e caracteres especiais',
+                    ),
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signupStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          errorText: signupStore.pass1Error,
+                        ),
+                        obscureText: true,
+                        onChanged: signupStore.setPass1,
+                      );
+                    }),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    FieldTitle(
+                      title: 'Confirmar Senha',
+                      subtitle: 'Repita a senha',
+                    ),
+                    Observer(builder: (_) {
+                      return TextField(
+                        enabled: !signupStore.loading,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          errorText: signupStore.pass2Error,
+                        ),
+                        obscureText: true,
+                        onChanged: signupStore.setPass2,
+                      );
+                    }),
+                    Observer(builder: (_) {
+                      return Container(
+                        height: 40,
+                        margin: const EdgeInsets.only(
+                          top: 20,
+                          bottom: 12,
+                        ),
+                        child: RaisedButton(
+                          color: Colors.orange,
+                          child: signupStore.loading
+                              ? CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(Colors.white),
+                              )
+                              : Text('CADASTRAR'),
+                          textColor: Colors.white,
+                          elevation: 0,
+                          onPressed: signupStore.signUpPressed,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      );
+                    }),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: [
+                          const Text(
+                            'Já tem uma conta?',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          GestureDetector(
+                            onTap: Navigator.of(context).pop,
+                            child: Text(
+                              'Entrar',
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.purple,
+                                fontSize: 16,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  Divider(
-                    color: Colors.black,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Wrap(
-                      alignment: WrapAlignment.center,
-                      children: [
-                        const Text(
-                          'Já tem uma conta?',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        GestureDetector(
-                          onTap: Navigator.of(context).pop,
-                          child: Text(
-                            'Entrar',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.purple,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
