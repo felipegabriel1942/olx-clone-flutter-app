@@ -1,5 +1,8 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 
+import '../stores/user_manager_store.dart';
+import '../repositories/user_repository.dart';
 import '../helpers/extensions.dart';
 
 part 'login_store.g.dart';
@@ -45,12 +48,21 @@ abstract class _LoginStoreBase with Store {
   @observable
   bool loading = false;
 
+  @observable
+  String error;
+
   @action
   Future<void> _login() async {
 
     loading = true;
 
-    await Future.delayed(Duration(seconds: 3));
+    try {
+      final user = await UserRepository().loginWithEmail(email, password);
+
+      GetIt.I<UserManagerStore>().setUser(user);
+    } catch (e) {
+      error = e;
+    }
 
     loading = false;
 

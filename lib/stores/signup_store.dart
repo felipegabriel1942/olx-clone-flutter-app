@@ -1,5 +1,7 @@
+import 'package:get_it/get_it.dart';
 import 'package:mobx/mobx.dart';
 
+import '../stores/user_manager_store.dart';
 import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../helpers/extensions.dart';
@@ -125,6 +127,7 @@ abstract class _SignupStoreBase with Store {
 
     try {
       final resultUser = await UserRepository().signUp(user);
+      GetIt.I<UserManagerStore>().setUser(resultUser);
     } catch (e) {
       error = e;
     }

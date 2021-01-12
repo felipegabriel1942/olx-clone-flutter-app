@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'package:olx_clone/stores/user_manager_store.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 import './stores/page_store.dart';
 import './screens/base/base_screen.dart';
@@ -19,11 +20,13 @@ Future<void> initializeParse() async {
     clientKey: 'APAXuh2K76VwzKPSp30JWYc5H6n346tVBLWEGnYl',
     autoSendSessionId: true,
     debug: true,
+    coreStore: await CoreStoreSembastImp.getInstance(password: 'olxclone'),
   );
 }
 
 void setupLocators() {
   GetIt.I.registerSingleton(PageStore());
+  GetIt.I.registerSingleton(UserManagerStore());
 }
 
 class MyApp extends StatelessWidget {

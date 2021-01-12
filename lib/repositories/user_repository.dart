@@ -6,7 +6,7 @@ import '../repositories/parse_erros.dart';
 import '../models/user.dart';
 
 class UserRepository {
-  Future<void> signUp(User user) async {
+  Future<User> signUp(User user) async {
     final parseUser = ParseUser(
       user.email,
       user.password,
@@ -24,6 +24,39 @@ class UserRepository {
     } else {
       return Future.error(ParseErrors.getDescription(response.error.code));
     }
+  }
+
+  Future<User> loginWithEmail(String email, String password) async {
+    final parseUser = ParseUser(email, password, email);
+
+    final response = await parseUser.login();
+
+    if (response.success) {
+      return mapParseToUser(response.result);
+    } else {
+      return Future.error(ParseErrors.getDescription(response.error.code));
+    }
+  }
+
+  Future<User> currentUser() async {
+    final parseUser = await ParseUser.currentUser();
+
+    print(parseUser);
+
+    if (parseUser != null) {
+      final response =
+          await ParseUser.getCurrentUserFromServer(parseUser.sessionToken);
+
+      print(response);
+
+      if(response.success) {
+        return mapParseToUser(response.result);
+      } else {
+        await parseUser.logout();
+      }
+    }
+
+    return null;
   }
 
   User mapParseToUser(ParseUser parseUser) {
