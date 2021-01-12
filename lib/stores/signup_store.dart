@@ -1,6 +1,6 @@
 import 'package:mobx/mobx.dart';
-import 'package:olx_clone/models/user.dart';
 
+import '../models/user.dart';
 import '../repositories/user_repository.dart';
 import '../helpers/extensions.dart';
 
